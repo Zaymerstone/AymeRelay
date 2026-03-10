@@ -39,9 +39,15 @@ export const signup = async (req, res) => {
     }); // before calling .save() on newUser, it is stored in memory and we can call it.
 
     if (newUser) {
-      generateToken(newUser._id, res);
+      // before CR:
+      // generateToken(newUser._id, res);
       // we can refer to newUser._id even before calling this .save()
-      await newUser.save(); // add newUser object to the DB. Now it will be stored in DB
+      // await newUser.save(); // add newUser object to the DB. Now it will be stored in DB
+
+      // after CR:
+      // Persist user first, then issue auth cookie
+      const savedUser = await newUser.save(); // save the user to the database and get the saved user with _id
+      generateToken(savedUser._id, res); // generate token using the saved user's _id and set it in the response cookie
 
       res.status(201).json({
         // reply to POST request with these fields

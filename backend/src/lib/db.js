@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 export const connectDB = async () => {
   // named export, so I need curly braces in the import file
   try {
+    const { MONGO_URI } = process.env;
+    if (!MONGO_URI) throw new Error("MONGO_URI is not set");
     const conn = await mongoose.connect(process.env.MONGO_URI); // connect to the database using our connection string
     console.log("Connected to MONGODB:", conn.connection.host);
   } catch (error) {
