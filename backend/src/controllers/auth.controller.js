@@ -1,6 +1,8 @@
+import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import { generateToken } from "../lib/utils.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import { ENV } from "../lib/env.js";
 
 export const signup = async (req, res) => {
   // what we get from the request, which fields user provides to us when filling out the form
@@ -56,7 +58,16 @@ export const signup = async (req, res) => {
         email: newUser.email,
         profilePic: newUser.profilePic,
       }); // sending json response to this POST request, so that client (frontend) can access necessary fields and display smth
-      // todo: send a welcome email to user
+
+      try {
+        await sendWelcomeEmail(
+          savedUser.email,
+          savedUser.fullName,
+          ENV.CLIENT_URL,
+        );
+      } catch (error) {
+        console.error("Failed to send welcome email:", error); // if this fails, then we just see console.log but programme doesnt stop after this, because we already created an account for user and sent response to frontend, so this email sending is just a bonus, if it fails, it should not affect the main functionality of signing up.
+      }
     } else {
       res.status(400).json({ message: "Invalid user data" });
     }
