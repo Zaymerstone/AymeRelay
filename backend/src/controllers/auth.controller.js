@@ -78,6 +78,10 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  if (!email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
   const { email, password } = req.body; // user provides email and password on frontend, we receive it here
 
   try {
