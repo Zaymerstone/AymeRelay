@@ -76,3 +76,38 @@ export const signup = async (req, res) => {
     (res.status(500), json({ message: "Internal server error" }));
   }
 };
+
+export const login = async (req, res) => {
+  const { email, password } = req.body; // user provides email and password on frontend, we receive it here
+
+  try {
+    const user = await User.findOne({ email }); // find if provided email exists in DB - error handling
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid Credentials" }); // if provided email do NOT exist in DB, we insta out from the funtion and send error msg
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password); // compare password provided by user with the hashed password stored in DB
+
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: "Invalid Credentials" }); // insta out if provided password is not the same
+    }
+
+    generateToken(user._id, res); // give token to user and link it with user._id so that we associate each user via id
+
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePic: user.profilePic,
+    });
+  } catch (error) {
+    console.error("Error in login controller:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const logout = (_, res) => {
+  res.cookie("jwt", "", { maxAge: 0 }); // clear cookies on logout. make sure name is the same as in utils.js when we set the cookie, which is "jwt".
+  res.status(200).json({ message: "Logged out succesfully" });
+};
