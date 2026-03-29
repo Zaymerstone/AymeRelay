@@ -3,6 +3,7 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { ENV } from "../lib/env.js";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req, res) => {
   // what we get from the request, which fields user provides to us when filling out the form
@@ -78,11 +79,10 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  const { email, password } = req.body; // user provides email and password on frontend, we receive it here
   if (!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
-
-  const { email, password } = req.body; // user provides email and password on frontend, we receive it here
 
   try {
     const user = await User.findOne({ email }); // find if provided email exists in DB - error handling
@@ -114,4 +114,27 @@ export const login = async (req, res) => {
 export const logout = (_, res) => {
   res.cookie("jwt", "", { maxAge: 0 }); // clear cookies on logout. make sure name is the same as in utils.js when we set the cookie, which is "jwt".
   res.status(200).json({ message: "Logged out succesfully" });
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { profilePic } = req.body;
+    if (!profilePic) {
+      return res.status(400).json({ message: "Profile picture is required" });
+      const userId = req.user._id; // we can use it because from auth.middleware js we did req.user = user
+
+      const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { profilePic: uploadResponse.secure_url },
+        { new: true },
+      );
+
+      res.status(200).json(updatedUser);
+    }
+  } catch (error) {
+    console.log("error in update profile:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
