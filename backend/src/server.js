@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path"; // to serve static files, like the frontend build files
+import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.route.js"; // Now authRoutes = the router I created earlier.
 import messageRoutes from "./routes/message.route.js"; // import router from message.route.js, so we can use it in this file, calling it messageRoutes
@@ -13,6 +14,7 @@ const PORT = ENV.PORT; // instead of hardcoding the port number
 
 // when user signsup he needs to provide email, fullname, password, so we need a middleware to get access to the fields the user enters
 app.use(express.json()); // to parse JSON bodies of incoming requests, so we can access req.body in our routes
+app.use(cookieParser()); // now it will not be undefined in auth.middleware.js :)
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes); // to link all pathes starting with /api/messages to the messageRoutes router logic
