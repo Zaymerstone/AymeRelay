@@ -21,7 +21,7 @@ export const protectRoute = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: "User is not found" });
     }
-    req.user = user; // we add custom field in request which is user
+    req.user = user; // add user to request so we can access it in the next function (server-to-server side always req usage)
     // we do it because, this middleware needs to provide user to another function - update profile
     next();
   } catch (error) {

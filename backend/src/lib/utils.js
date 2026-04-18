@@ -7,6 +7,7 @@ export const generateToken = (userId, res) => {
     throw new Error("JWT_SECRET is not configured");
   }
   const token = jwt.sign({ userId }, JWT_SECRET, {
+    // сюда кладем ту инфу которую хотим получать из токена при декодинге
     expiresIn: "7d",
   });
 
