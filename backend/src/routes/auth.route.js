@@ -10,14 +10,13 @@ import { arcjetProtection } from "../middleware/arcjet.middleware.js";
 
 const router = express.Router();
 
-router.use(arcjetProtection); // Apply Arcjet protection to all routes in this router
 // router.get("/test", arcjetProtection, (req, res) => {
 //   res.status(200).json({ message: "Test route" });
 // }); works good
-router.post("/signup", signup); // When someone goes to /signup, call the signup function from the controller
-router.post("/login", login);
-router.post("/logout", logout);
-router.put("/update-profile", protectRoute, updateProfile); // if only user is authenticated only then he can call updateProfile funct
+router.post("/signup", arcjetProtection, signup); // When someone goes to /signup, call the signup function from the controller
+router.post("/login", arcjetProtection, login);
+router.post("/logout", arcjetProtection, logout); // add protectRoute middleware, because we want to logout only auth user
+router.put("/update-profile", protectRoute, arcjetProtection, updateProfile); // if only user is authenticated only then he can call updateProfile funct
 
 router.get("/check", protectRoute, (req, res) =>
   res.status(200).json(req.user),
