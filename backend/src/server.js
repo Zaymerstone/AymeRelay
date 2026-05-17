@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.route.js"; // Now authRoutes = the router 
 import messageRoutes from "./routes/message.route.js"; // import router from message.route.js, so we can use it in this file, calling it messageRoutes
 import { connectDB } from "./lib/db.js"; // named import so need curly braces
 import { ENV } from "./lib/env.js";
+import cors from "cors";
 
 const app = express();
 const __dirname = path.resolve(); // to get the current directory path, so we can use it to serve static files
@@ -14,6 +15,7 @@ const PORT = ENV.PORT; // instead of hardcoding the port number
 
 // when user signsup he needs to provide email, fullname, password, so we need a middleware to get access to the fields the user enters
 app.use(express.json()); // to parse JSON bodies of incoming requests, so we can access req.body in our routes
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(cookieParser()); // now it will not be undefined in auth.middleware.js :)
 
 app.use("/api/auth", authRoutes);
