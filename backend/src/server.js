@@ -14,7 +14,7 @@ const __dirname = path.resolve(); // to get the current directory path, so we ca
 const PORT = ENV.PORT; // instead of hardcoding the port number
 
 // when user signsup he needs to provide email, fullname, password, so we need a middleware to get access to the fields the user enters
-app.use(express.json()); // to parse JSON bodies of incoming requests, so we can access req.body in our routes
+app.use(express.json({ limit: "5mb" })); // to parse JSON bodies of incoming requests, so we can access req.body in our routes
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(cookieParser()); // now it will not be undefined in auth.middleware.js :)
 
