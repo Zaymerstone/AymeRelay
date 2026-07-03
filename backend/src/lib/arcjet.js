@@ -7,18 +7,20 @@ const aj = arcjet({
   rules: [
     // Shield protects your app from common attacks e.g. SQL injection
     shield({ mode: "LIVE" }),
-    // Create a bot detection rule
+
+    // Bot detection: log only for now, do not block real users on deployed version
     detectBot({
-      mode: process.env.NODE_ENV === "development" ? "DRY_RUN" : "LIVE",
+      mode: "DRY_RUN",
       allow: [
         "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
         //"CATEGORY:MONITOR", // Uptime monitoring services
         //"CATEGORY:PREVIEW", // Link previews e.g. Slack, Discord
       ],
     }),
-    // Create a token bucket rate limit. Other algorithms are supported.
+
+    // Rate limit
     slidingWindow({
-      mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
+      mode: "LIVE",
       max: 100,
       interval: 60,
     }),
