@@ -7,8 +7,8 @@ import messageRoutes from "./routes/message.route.js"; // import router from mes
 import { connectDB } from "./lib/db.js"; // named import so need curly braces
 import { ENV } from "./lib/env.js";
 import cors from "cors";
+import { app, server } from "./lib/socket.js";
 
-const app = express();
 const __dirname = path.resolve(); // to get the current directory path, so we can use it to serve static files
 
 const PORT = ENV.PORT; // instead of hardcoding the port number
@@ -33,7 +33,7 @@ if (ENV.NODE_ENV === "production") {
   }); // if we get request https://aymerelay.com/chat, without this it would be cannot GET /chat, but its good because we have reference to index and to front here. React router type of vibe
 }
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   connectDB(); // connect to the database when the server starts
 });
